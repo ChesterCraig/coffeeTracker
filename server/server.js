@@ -8,6 +8,9 @@ const http = require("http");
 const publicPath = path.join(__dirname,"../public");
 const port = process.env.port || 3000;
 
+//Coffee buying tracking array
+var coffeeLog = [];
+
 //Create webserver app
 var app = express();
 
@@ -20,30 +23,33 @@ var io = socketIO(server);
 //set middleware to serve up static files.
 app.use(express.static(publicPath));
 
-
 //respond to io event
 io.on("connection", (socket) => {
-    console.log("New user connected");
+    //update client with buyer
+    if (coffeeLog.length == 0) {
+        socket.emit('update',{buyer: undefined});
+    } else {
+        socket.emit('update',coffeeLog[coffeeLog.length - 1]);
+    }
 
-    //handle receiving a message from a client
-    socket.on("createMessage", (message) => {
-        console.log("createMesage: ", message);
+    //recieve update from client about new buyer
+    socket.on('coffeeBought', (data) => {
+        if (data.buyer) {
+            //update the coffeeLog
+            data.purchaseDate = new Date().getDate();
+            coffeeLog.push(data);
 
-        io.emit('newMessage',{
-            from:message.from,
-            text:message.text,
-            createdAt: new Date().getDate()
-
-        });
-
+            //let any other connected clients know
+            io.emit('update',data);
+        } else {
+            console.log('missing buyer in coffeeBought message from client - no update made.');
+        }
     });
     
     socket.on("disconnect",(socket) => {
-        console.log("User disconnected");
+        //nada
     });
 });
-
-
 
 
 //start server

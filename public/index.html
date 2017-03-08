@@ -2,10 +2,31 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <style>
+        .image { 
+        position: relative; 
+        width: 100%; /* for IE 6 */
+        }
+
+        h2 { 
+        position: absolute; 
+        top: 200px; 
+        left: 350px; 
+        width: 100%; 
+        }
+    </style>
 </head>
 <body>
-    <h1>Chat App</h1>
-    <p>Welcome</p>
+    <h1>Who bought coffee last</h1>
+    <div class="image">
+       <img src="./res/Html Coffee Mug.jpg" id="cup">
+      <h2 id="buyer">?????</h2>
+    </div>
+    <div id="firstCoffeBuyers">
+        <h3>New Purchase by:</h3>
+        <button id="camButton">Cameron</button>
+        <button id="chezButton">Chester</button>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="./js/index.js"></script>
 </body>
